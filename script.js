@@ -84,6 +84,8 @@ check.addEventListener('click', function () {
       score.textContent = RealScore;
     } else {
       loseSit();
+
+      
     }
   }
 });
