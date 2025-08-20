@@ -1,61 +1,93 @@
 'use strict';
 
-let score = 20;
-let secertNumber = Math.trunc(Math.random() * 20) + 1;
-let highscore = 0;
+//* Selecting Elements
+let message = document.querySelector('.message');
+let score = document.querySelector('.score');
+let check = document.querySelector('.check');
+let highScore = document.querySelector('.highscore');
+let guess = document.querySelector('.guess');
+let Num = document.querySelector('.number');
+let Again = document.querySelector('.again');
 
-const displayMassage = function (message) {
-  document.querySelector('.message').textContent = message;
+//* Variables
+let secretNum = Math.trunc(Math.random() * 20 + 1);
+let RealScore = 20;
+let Highscore = 0;
+let clapSound = document.getElementById("clap");
+let loseSound = document.getElementById("lose");
+
+//* function
+
+function playWin() {
+  clapSound.currentTime = 0; // يرجّع الصوت لأول لحظة
+  clapSound.play();
+}
+
+function playLose() {
+  loseSound.currentTime = 0;
+  loseSound.play();
+}
+
+let loseSit = function () {
+  message.textContent = 'You lose';
+  document.body.style.backgroundColor = '#f42c2cff';
+  Num.textContent = secretNum;
+  Num.style.width = '15rem';
+  guess.value = '';
+  playLose();
 };
 
-const updateScore = function (newScore) {
-  document.querySelector('.score').textContent = newScore;
+let messageFunc = function (msg) {
+  message.textContent = msg;
 };
 
-const resetStyles = function () {
-  document.querySelector('body').style.backgroundColor = '#222';
-  document.querySelector('.number').style.width = '15rem';
+let winSit = function () {
+  message.textContent = 'congrats';
+  document.body.style.backgroundColor = '#60b347';
+  Num.textContent = secretNum;
+  Num.style.width = '30rem';
+  if (RealScore > Highscore) {
+    Highscore = RealScore;
+    highScore.textContent = Highscore;
+  }
+  playWin();
 };
 
-const handleWin = function () {
-  displayMassage('🎉 congrats');
-  document.querySelector('body').style.backgroundColor = '#60b347';
-  document.querySelector('.number').style.width = '30rem';
+
+
+
+
+let AgainFunc = function () {
+  score.textContent = RealScore;
+  document.body.style.backgroundColor = '#222';
+  Num.style.width = '15rem';
+  Num.textContent = '?';
+  score.textContent = RealScore = 20;
+  guess.value = '';
+  messageFunc('Start guessing...');
+
+  secretNum = Math.trunc(Math.random() * 20 + 1);
 };
 
-// Again button code
-document.querySelector('.again').addEventListener('click', function () {
-  score = 20;
-  secertNumber = Math.trunc(Math.random() * 20) + 1;
+check.addEventListener('click', function () {
+  let userNum = Number(guess.value);
+  console.log(userNum);
 
-  displayMassage('start guessing');
-  document.querySelector('.guess').value = '';
-  resetStyles();
-  updateScore(score);
-  document.querySelector('.highscore').textContent = highscore;
-});
-
-// Check button code
-document.querySelector('.check').addEventListener('click', function () {
-  const Guess = Number(document.querySelector('.guess').value);
-
-  // No input
-  if (!Guess) {
-    displayMassage('⛔ Error');
-  } else if (secertNumber === Guess) {
-    handleWin();
-    if (score > highscore) {
-      highscore = score;
-      document.querySelector('.highscore').textContent = highscore;
-    }
-  } else {
-    if (score > 0) {
-      displayMassage(secertNumber > Guess ? '📉Too low' : '📈Too high');
-      score--;
-      updateScore(score);
+  if (!userNum) {
+    messageFunc('NO number selected');
+  } else if (userNum === secretNum) {
+    winSit();
+  } else if (userNum !== secretNum) {
+    if (RealScore > 1) {
+      messageFunc(userNum > secretNum ? 'Too High' : 'Too low');
+      RealScore--;
+      score.textContent = RealScore;
     } else {
-      displayMassage('😔 You lost the game');
-      updateScore(0);
+      loseSit();
     }
   }
+});
+
+Again.addEventListener('click', function () {
+  AgainFunc();
 });
